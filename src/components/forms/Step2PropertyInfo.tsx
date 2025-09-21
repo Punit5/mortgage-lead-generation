@@ -8,238 +8,160 @@ export default function Step2PropertyInfo({
   prevStep,
   errors
 }: FormStepProps) {
-  const handleNext = () => {
-    console.log('Step 2 - Property Info:', formData.propertyInfo);
-    nextStep();
+  const handleSelection = (propertyType: string) => {
+    console.log('Step 2 - Property Type:', propertyType);
+    updateFormData({
+      loanDetails: { ...formData.loanDetails, propertyType: propertyType as any }
+    });
+    setTimeout(nextStep, 600);
   };
 
-  const provinces = [
-    { code: 'BC', name: 'British Columbia' },
-    { code: 'AB', name: 'Alberta' },
-    { code: 'SK', name: 'Saskatchewan' },
-    { code: 'MB', name: 'Manitoba' },
-    { code: 'ON', name: 'Ontario' },
-    { code: 'QC', name: 'Quebec' },
-    { code: 'NB', name: 'New Brunswick' },
-    { code: 'NS', name: 'Nova Scotia' },
-    { code: 'PE', name: 'Prince Edward Island' },
-    { code: 'NL', name: 'Newfoundland and Labrador' },
-    { code: 'YT', name: 'Yukon' },
-    { code: 'NT', name: 'Northwest Territories' },
-    { code: 'NU', name: 'Nunavut' }
+  const propertyTypes = [
+    {
+      value: 'single-family',
+      label: 'Single Family Home',
+      icon: '🏡',
+      description: 'Detached house with your own land'
+    },
+    {
+      value: 'townhome',
+      label: 'Town Home',
+      icon: '🏘️',
+      description: 'Multi-level home sharing walls'
+    },
+    {
+      value: 'condominium',
+      label: 'Condominium',
+      icon: '🏢',
+      description: 'Unit in a shared building'
+    },
+    {
+      value: 'multi-family',
+      label: 'Multi Family Home',
+      icon: '🏠',
+      description: 'Property with multiple units'
+    }
   ];
 
-  const downPaymentPercent = formData.propertyInfo.propertyValue > 0
-    ? (formData.propertyInfo.downPayment / formData.propertyInfo.propertyValue) * 100
-    : 0;
-
-  const loanToValue = 100 - downPaymentPercent;
-
   return (
-    <div className="space-y-8">
-      <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
-          Tell us about your property
-        </h2>
-        <p className="text-gray-600">
-          Property details help us calculate accurate payments
-        </p>
-      </div>
+    <div className="space-y-2 animate-slideInUp">
+        <div className="text-center">
+          <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full mx-auto mb-2 flex items-center justify-center shadow-lg relative group">
+            <span className="text-xl">🏗️</span>
+            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
+              Help us understand your property type
+            </div>
+          </div>
+          <h2 className="text-lg font-bold text-gray-800 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+            Property Information
+          </h2>
+        </div>
 
-      {/* Property Province */}
-      <div>
-        <label className="block text-lg font-semibold text-gray-900 mb-3">
-          What province is the property in?
-        </label>
-        <select
-          value={formData.propertyInfo.province}
-          onChange={(e) => updateFormData({
-            propertyInfo: { ...formData.propertyInfo, province: e.target.value }
-          })}
-          className={`w-full px-4 py-4 text-lg border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors ${
-            errors.province ? 'border-red-500' : 'border-gray-300 focus:border-primary-500'
-          }`}
-        >
-          <option value="">Select a province</option>
-          {provinces.map((province) => (
-            <option key={province.code} value={province.code}>
-              {province.name} ({province.code})
-            </option>
+        {/* Question */}
+        <div className="text-center">
+          <h3 className="text-xl font-bold text-gray-800 mb-4 relative group">
+            What type of property?
+            <span className="ml-1 text-gray-400 cursor-help">ℹ️</span>
+            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
+              Choose the option that best describes your property
+            </div>
+          </h3>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          {propertyTypes.map((type, index) => (
+            <button
+              key={type.value}
+              onClick={() => handleSelection(type.value)}
+              className={`group p-8 rounded-2xl border-3 text-left transition-all duration-500 transform hover:scale-105 hover:shadow-2xl active:scale-95 hover-lift ${
+                formData.loanDetails.propertyType === type.value
+                  ? 'border-purple-400 bg-gradient-to-br from-purple-50 to-pink-50 text-gray-900 shadow-2xl scale-105 ring-4 ring-purple-200'
+                  : 'border-gray-300 hover:border-purple-400 bg-white hover:bg-purple-50 text-gray-800 shadow-lg hover:shadow-purple-500/20'
+              }`}
+              style={{ animationDelay: `${index * 0.1}s` }}
+            >
+              <div className="text-center">
+                <div className={`w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-4 transition-all duration-300 ${
+                  formData.loanDetails.propertyType === type.value
+                    ? 'bg-purple-100 group-hover:bg-purple-200'
+                    : 'bg-purple-100 group-hover:bg-purple-200'
+                }`}>
+                  <span className="text-4xl group-hover:scale-110 transition-transform">{type.icon}</span>
+                </div>
+
+                <div className="mb-4">
+                  <span className="font-bold text-xl block mb-2">{type.label}</span>
+                  <span className={`text-sm ${formData.loanDetails.propertyType === type.value ? 'text-gray-700' : 'text-gray-400'}`}>
+                    {type.description}
+                  </span>
+                </div>
+
+                <div className={`w-8 h-8 rounded-full border-4 transition-all duration-300 mx-auto ${
+                  formData.loanDetails.propertyType === type.value
+                    ? 'border-purple-500 bg-purple-500 shadow-xl'
+                    : 'border-gray-400 group-hover:border-purple-400'
+                }`}>
+                  {formData.loanDetails.propertyType === type.value && (
+                    <div className="w-full h-full rounded-full bg-white flex items-center justify-center animate-bounce">
+                      <svg className="w-4 h-4 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </button>
           ))}
-        </select>
-        {errors.province && (
-          <p className="mt-2 text-red-600 text-sm">{errors.province}</p>
-        )}
-      </div>
-
-      {/* Property Value */}
-      <div>
-        <label className="block text-lg font-semibold text-gray-900 mb-3">
-          What's the property value?
-        </label>
-        <div className="relative">
-          <span className="absolute left-4 top-4 text-gray-500 text-lg">$</span>
-          <input
-            type="number"
-            value={formData.propertyInfo.propertyValue}
-            onChange={(e) => updateFormData({
-              propertyInfo: { ...formData.propertyInfo, propertyValue: Number(e.target.value) }
-            })}
-            className={`w-full pl-10 pr-4 py-4 text-lg border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors ${
-              errors.propertyValue ? 'border-red-500' : 'border-gray-300 focus:border-primary-500'
-            }`}
-            placeholder="500,000"
-          />
         </div>
-        {errors.propertyValue && (
-          <p className="mt-2 text-red-600 text-sm">{errors.propertyValue}</p>
-        )}
-      </div>
 
-      {/* Down Payment */}
-      <div>
-        <label className="block text-lg font-semibold text-gray-900 mb-3">
-          How much will you put down?
-        </label>
-        <div className="relative">
-          <span className="absolute left-4 top-4 text-gray-500 text-lg">$</span>
-          <input
-            type="number"
-            value={formData.propertyInfo.downPayment}
-            onChange={(e) => updateFormData({
-              propertyInfo: { ...formData.propertyInfo, downPayment: Number(e.target.value) }
-            })}
-            className={`w-full pl-10 pr-4 py-4 text-lg border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors ${
-              errors.downPayment ? 'border-red-500' : 'border-gray-300 focus:border-primary-500'
-            }`}
-            placeholder="100,000"
-          />
-          <div className="absolute right-4 top-4 text-lg text-gray-500">
-            {downPaymentPercent.toFixed(1)}%
-          </div>
-        </div>
-        {errors.downPayment && (
-          <p className="mt-2 text-red-600 text-sm">{errors.downPayment}</p>
-        )}
-
-        {/* Down Payment Helper */}
-        <div className="mt-3 grid grid-cols-3 gap-2 text-sm">
-          <button
-            onClick={() => {
-              const propertyValue = formData.propertyInfo.propertyValue;
-              let downPayment;
-              if (propertyValue <= 500000) {
-                downPayment = Math.round(propertyValue * 0.05);
-              } else {
-                downPayment = 25000 + Math.round((propertyValue - 500000) * 0.10);
-              }
-              updateFormData({
-                propertyInfo: { ...formData.propertyInfo, downPayment }
-              });
-            }}
-            className="px-3 py-2 bg-primary-100 text-primary-800 rounded-md hover:bg-primary-200 transition-colors"
-          >
-            Minimum
-          </button>
-          <button
-            onClick={() => updateFormData({
-              propertyInfo: {
-                ...formData.propertyInfo,
-                downPayment: Math.round(formData.propertyInfo.propertyValue * 0.10)
-              }
-            })}
-            className="px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors"
-          >
-            10% Down
-          </button>
-          <button
-            onClick={() => updateFormData({
-              propertyInfo: {
-                ...formData.propertyInfo,
-                downPayment: Math.round(formData.propertyInfo.propertyValue * 0.20)
-              }
-            })}
-            className="px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors"
-          >
-            20% Down
-          </button>
-        </div>
-      </div>
-
-      {/* Loan Info Display */}
-      <div className="bg-primary-50 rounded-lg p-4">
-        <h3 className="font-semibold text-primary-900 mb-2">Loan Summary</h3>
-        <div className="grid grid-cols-2 gap-4 text-sm">
-          <div>
-            <span className="text-gray-600">Loan Amount:</span>
-            <div className="font-semibold text-primary-800">
-              ${(formData.propertyInfo.propertyValue - formData.propertyInfo.downPayment).toLocaleString()}
-            </div>
-          </div>
-          <div>
-            <span className="text-gray-600">Loan-to-Value:</span>
-            <div className="font-semibold text-primary-800">
-              {loanToValue.toFixed(1)}%
-            </div>
-          </div>
-        </div>
-        {(loanToValue > 80) && (
-          <div className="mt-2 text-xs text-orange-600">
-            ⚠️ PMI may be required (LTV greater than 80%)
+        {errors.propertyType && (
+          <div className="mt-8 p-6 bg-red-50 border-2 border-red-200 rounded-xl animate-shake">
+            <p className="text-red-600 text-lg flex items-center justify-center">
+              <svg className="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+              </svg>
+              {errors.propertyType}
+            </p>
           </div>
         )}
-      </div>
-
-      {/* First Time Home Buyer */}
-      <div>
-        <label className="block text-lg font-semibold text-gray-900 mb-3">
-          Are you a first-time home buyer?
-        </label>
-        <div className="grid grid-cols-2 gap-3">
-          <button
-            onClick={() => updateFormData({
-              propertyInfo: { ...formData.propertyInfo, firstTimeHomeBuyer: true }
-            })}
-            className={`p-4 rounded-lg border-2 text-center transition-colors ${
-              formData.propertyInfo.firstTimeHomeBuyer
-                ? 'border-primary-500 bg-primary-50 text-primary-900'
-                : 'border-gray-300 hover:border-primary-300 hover:bg-primary-50'
-            }`}
-          >
-            <div className="font-medium">Yes</div>
-            <div className="text-sm text-gray-600">Special programs available</div>
-          </button>
-          <button
-            onClick={() => updateFormData({
-              propertyInfo: { ...formData.propertyInfo, firstTimeHomeBuyer: false }
-            })}
-            className={`p-4 rounded-lg border-2 text-center transition-colors ${
-              !formData.propertyInfo.firstTimeHomeBuyer
-                ? 'border-primary-500 bg-primary-50 text-primary-900'
-                : 'border-gray-300 hover:border-primary-300 hover:bg-primary-50'
-            }`}
-          >
-            <div className="font-medium">No</div>
-            <div className="text-sm text-gray-600">Regular programs</div>
-          </button>
-        </div>
       </div>
 
       {/* Navigation Buttons */}
-      <div className="flex justify-between pt-6">
-        <button
-          onClick={prevStep}
-          className="bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-700 transition-colors"
-        >
-          ← Back
-        </button>
-        <button
-          onClick={handleNext}
-          className="bg-primary-800 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-primary-900 transition-colors shadow-lg hover:shadow-xl"
-        >
-          Continue to Personal Info
-        </button>
+      <div className="flex justify-between pt-8">
+          <button
+            onClick={prevStep}
+            className="bg-gray-500 hover:bg-gray-600 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg"
+          >
+            <span className="flex items-center">
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Back
+            </span>
+          </button>
+
+        {formData.loanDetails.propertyType && (
+          <button
+            onClick={() => nextStep()}
+            className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl flex-1 ml-4 animate-glow"
+          >
+            <span className="flex items-center justify-center">
+              Continue
+              <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </span>
+          </button>
+        )}
       </div>
-    </div>
+
+        {/* Progress indicator */}
+        <div className="text-center mt-12">
+          <div className="flex items-center justify-center space-x-3 text-gray-600 text-lg">
+            <div className="w-3 h-3 bg-purple-500 rounded-full animate-pulse"></div>
+            <span className="font-medium">Step 2 of 11</span>
+            <div className="text-sm text-gray-900">• Almost there!</div>
+          </div>
+        </div>
+      </div>
   );
 }

@@ -56,13 +56,14 @@ export function calculateLeadScore(formData: FormData): LeadScore {
 }
 
 function scoreCreditworthiness(formData: FormData): number {
-  const creditScore = formData.financialInfo.creditScore;
+  const creditScore = formData.loanDetails.creditScore;
 
   switch (creditScore) {
-    case 'excellent': return 100;
-    case 'good': return 70;
-    case 'fair': return 50;
-    case 'poor': return 25;
+    case 'excellent-780+': return 100;
+    case 'very-good-720-779': return 85;
+    case 'good-660-719': return 70;
+    case 'fair-600-659': return 50;
+    case 'needs-work-599': return 25;
     default: return 60; // Unknown
   }
 }
@@ -70,8 +71,8 @@ function scoreCreditworthiness(formData: FormData): number {
 function scoreFinancialStability(formData: FormData): number {
   let score = 0;
 
-  // Income scoring (40 points)
-  const income = formData.financialInfo.annualIncome;
+  // Income scoring (40 points) - estimated from current defaults
+  const income = formData.financialInfo.annualIncome || 75000;
   if (income >= 150000) score += 40;
   else if (income >= 100000) score += 35;
   else if (income >= 75000) score += 30;
@@ -87,15 +88,14 @@ function scoreFinancialStability(formData: FormData): number {
     default: score += 5;
   }
 
-  // Debt-to-income ratio (30 points)
-  const monthlyIncome = income / 12;
-  const debtRatio = formData.financialInfo.monthlyDebts / monthlyIncome;
-
-  if (debtRatio <= 0.15) score += 30;
-  else if (debtRatio <= 0.25) score += 25;
-  else if (debtRatio <= 0.35) score += 15;
-  else if (debtRatio <= 0.45) score += 10;
-  else score += 0;
+  // Credit history impact (30 points)
+  switch (formData.loanDetails.creditHistory) {
+    case 'none': score += 30; break;
+    case 'consumer-proposal': score += 15; break;
+    case 'foreclosure': score += 5; break;
+    case 'bankruptcy': score += 0; break;
+    default: score += 20;
+  }
 
   return Math.min(100, score);
 }
@@ -103,20 +103,21 @@ function scoreFinancialStability(formData: FormData): number {
 function scoreUrgency(formData: FormData): number {
   let score = 50; // Base score
 
-  // Timeline urgency
-  switch (formData.loanDetails.timeline) {
-    case '30-days': score += 40; break;
-    case '60-days': score += 30; break;
-    case '90-days': score += 20; break;
-    case 'no-rush': score += 0; break;
+  // Loan purpose urgency
+  switch (formData.loanDetails.loanPurpose) {
+    case 'home-improvement': score += 30; break;
+    case 'debt-consolidation': score += 25; break;
+    case 'investment-purposes': score += 15; break;
+    case 'retirement-income': score += 10; break;
     default: score += 0;
   }
 
-  // Loan purpose urgency
-  switch (formData.loanDetails.purpose) {
-    case 'purchase': score += 10; break;
-    case 'refinance': score += 5; break;
-    case 'cash-out-refinance': score += 15; break;
+  // Property usage impact
+  switch (formData.loanDetails.propertyUsage) {
+    case 'primary-home': score += 20; break;
+    case 'secondary-home': score += 10; break;
+    case 'rental': score += 5; break;
+    default: score += 0;
   }
 
   return Math.min(100, score);
@@ -125,32 +126,36 @@ function scoreUrgency(formData: FormData): number {
 function scoreLoanViability(formData: FormData): number {
   let score = 0;
 
-  // Loan-to-value ratio (40 points)
-  const loanAmount = formData.loanDetails.amount;
-  const propertyValue = formData.propertyInfo.propertyValue;
-  const ltv = loanAmount / propertyValue;
+  // Property value scoring (40 points)
+  switch (formData.loanDetails.propertyValue) {
+    case '600k-900k':
+    case '900k-1200k': score += 40; break;
+    case '300k-600k':
+    case '1200k-1500k': score += 35; break;
+    case '1500k-2000k': score += 30; break;
+    case 'above-2000k': score += 25; break;
+    case 'below-300k': score += 20; break;
+    default: score += 30;
+  }
 
-  if (ltv <= 0.65) score += 40;
-  else if (ltv <= 0.75) score += 35;
-  else if (ltv <= 0.80) score += 30;
-  else if (ltv <= 0.85) score += 20;
-  else if (ltv <= 0.95) score += 10;
-  else score += 0;
+  // Loan amount scoring (35 points)
+  switch (formData.loanDetails.loanAmount) {
+    case '100k-200k': score += 35; break;
+    case '75k-100k': score += 30; break;
+    case '50k-75k': score += 25; break;
+    case 'above-200k': score += 30; break;
+    case '25k-50k': score += 20; break;
+    case 'below-25k': score += 10; break;
+    default: score += 25;
+  }
 
-  // Down payment (30 points)
-  const downPaymentPercent = (formData.propertyInfo.downPayment / propertyValue) * 100;
-  if (downPaymentPercent >= 25) score += 30;
-  else if (downPaymentPercent >= 20) score += 25;
-  else if (downPaymentPercent >= 15) score += 20;
-  else if (downPaymentPercent >= 10) score += 15;
-  else if (downPaymentPercent >= 5) score += 10;
-  else score += 0;
-
-  // Loan amount reasonableness (30 points)
-  if (loanAmount >= 100000 && loanAmount <= 2000000) score += 30;
-  else if (loanAmount >= 50000 && loanAmount < 100000) score += 20;
-  else if (loanAmount > 2000000 && loanAmount <= 3000000) score += 25;
-  else score += 10;
+  // Current mortgage status (25 points)
+  switch (formData.loanDetails.currentMortgages) {
+    case 'paid-off': score += 25; break;
+    case 'one-mortgage': score += 20; break;
+    case 'two-mortgages': score += 10; break;
+    default: score += 15;
+  }
 
   return Math.min(100, score);
 }
@@ -213,9 +218,8 @@ function getRecommendations(formData: FormData, scores: any): string[] {
   }
 
   // Specific loan recommendations
-  const downPaymentPercent = (formData.propertyInfo.downPayment / formData.propertyInfo.propertyValue) * 100;
-  if (downPaymentPercent < 20) {
-    recommendations.push('Discuss mortgage insurance options');
+  if (formData.loanDetails.creditHistory && formData.loanDetails.creditHistory !== 'none') {
+    recommendations.push('Address credit history concerns early in conversation');
   }
 
   if (formData.financialInfo.employmentStatus === 'self-employed') {
@@ -224,6 +228,10 @@ function getRecommendations(formData: FormData, scores: any): string[] {
 
   if (formData.propertyInfo.firstTimeHomeBuyer) {
     recommendations.push('Present first-time buyer programs and incentives');
+  }
+
+  if (formData.loanDetails.propertyUsage === 'rental') {
+    recommendations.push('Discuss investment property lending requirements');
   }
 
   return recommendations;
@@ -262,45 +270,41 @@ function calculateApprovalProbability(formData: FormData, scores: any): number {
   let probability = 50;
 
   // Credit score impact
-  const creditScore = formData.financialInfo.creditScore;
+  const creditScore = formData.loanDetails.creditScore;
   switch (creditScore) {
-    case 'excellent': probability += 30; break;
-    case 'good': probability += 10; break;
-    case 'fair': probability -= 10; break;
-    case 'poor': probability -= 25; break;
+    case 'excellent-780+': probability += 30; break;
+    case 'very-good-720-779': probability += 20; break;
+    case 'good-660-719': probability += 10; break;
+    case 'fair-600-659': probability -= 10; break;
+    case 'needs-work-599': probability -= 25; break;
   }
 
-  // Income impact
-  const income = formData.financialInfo.annualIncome;
-  const loanAmount = formData.loanDetails.amount;
-  const incomeMultiple = loanAmount / income;
-
-  if (incomeMultiple <= 3) probability += 15;
-  else if (incomeMultiple <= 4) probability += 10;
-  else if (incomeMultiple <= 5) probability += 0;
-  else probability -= 15;
-
-  // Down payment impact
-  const downPaymentPercent = (formData.propertyInfo.downPayment / formData.propertyInfo.propertyValue) * 100;
-  if (downPaymentPercent >= 25) probability += 15;
-  else if (downPaymentPercent >= 20) probability += 10;
-  else if (downPaymentPercent >= 15) probability += 5;
-  else if (downPaymentPercent < 5) probability -= 20;
-
-  // Employment status impact
-  switch (formData.financialInfo.employmentStatus) {
-    case 'employed': probability += 10; break;
-    case 'self-employed': probability -= 5; break;
-    case 'unemployed': probability -= 30; break;
-    default: probability -= 5; break;
+  // Credit history impact
+  switch (formData.loanDetails.creditHistory) {
+    case 'none': probability += 15; break;
+    case 'consumer-proposal': probability -= 5; break;
+    case 'foreclosure': probability -= 15; break;
+    case 'bankruptcy': probability -= 25; break;
   }
 
   // Property type impact
   switch (formData.loanDetails.propertyType) {
     case 'single-family': probability += 5; break;
-    case 'condo': probability += 0; break;
-    case 'townhouse': probability += 3; break;
+    case 'condominium': probability += 0; break;
+    case 'townhome': probability += 3; break;
     case 'multi-family': probability -= 5; break;
+  }
+
+  // Property usage impact
+  switch (formData.loanDetails.propertyUsage) {
+    case 'primary-home': probability += 10; break;
+    case 'secondary-home': probability += 0; break;
+    case 'rental': probability -= 5; break;
+  }
+
+  // Homeowner status
+  if (formData.loanDetails.isHomeowner) {
+    probability += 10;
   }
 
   return Math.max(0, Math.min(100, Math.round(probability)));
@@ -347,17 +351,20 @@ EMAIL: ${formData.personalInfo.email}
 PHONE: ${formData.personalInfo.phone}
 
 LOAN DETAILS:
-- Amount: $${formData.loanDetails.amount.toLocaleString()}
-- Property Value: $${formData.propertyInfo.propertyValue.toLocaleString()}
-- Down Payment: $${formData.propertyInfo.downPayment.toLocaleString()} (${Math.round((formData.propertyInfo.downPayment / formData.propertyInfo.propertyValue) * 100)}%)
-- Purpose: ${formData.loanDetails.purpose}
-- Timeline: ${formData.loanDetails.timeline}
+- Homeowner: ${formData.loanDetails.isHomeowner ? 'Yes' : 'No'}
+- Property Type: ${formData.loanDetails.propertyType || 'Not specified'}
+- Property Usage: ${formData.loanDetails.propertyUsage || 'Not specified'}
+- Property Value Range: ${formData.loanDetails.propertyValue || 'Not specified'}
+- Loan Amount Range: ${formData.loanDetails.loanAmount || 'Not specified'}
+- Loan Purpose: ${formData.loanDetails.loanPurpose || 'Not specified'}
+- Current Mortgages: ${formData.loanDetails.currentMortgages || 'Not specified'}
+- Province: ${formData.loanDetails.province || 'Not specified'}
 
 FINANCIAL PROFILE:
-- Annual Income: $${formData.financialInfo.annualIncome.toLocaleString()}
-- Credit Score: ${formData.financialInfo.creditScore}
-- Employment: ${formData.financialInfo.employmentStatus}
-- Monthly Debts: $${formData.financialInfo.monthlyDebts.toLocaleString()}
+- Credit Score: ${formData.loanDetails.creditScore || 'Not specified'}
+- Credit History: ${formData.loanDetails.creditHistory || 'Not specified'}
+- Annual Income: $${formData.financialInfo.annualIncome?.toLocaleString() || 'Not specified'}
+- Employment: ${formData.financialInfo.employmentStatus || 'Not specified'}
 
 SCORING:
 - Approval Probability: ${leadScore.approvalProbability}%

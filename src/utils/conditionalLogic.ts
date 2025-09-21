@@ -28,29 +28,29 @@ export const conditionalFields: ConditionalField[] = [
     helpText: 'Monthly rental income from additional units'
   },
 
-  // Show refinance-specific fields
+  // Show current mortgage fields based on mortgage status
   {
     fieldName: 'currentMortgageBalance',
-    showWhen: (data) => data.loanDetails.purpose === 'refinance' || data.loanDetails.purpose === 'cash-out-refinance',
-    requiredWhen: (data) => data.loanDetails.purpose === 'refinance' || data.loanDetails.purpose === 'cash-out-refinance',
+    showWhen: (data) => data.loanDetails.currentMortgages === 'one-mortgage' || data.loanDetails.currentMortgages === 'two-mortgages',
+    requiredWhen: (data) => data.loanDetails.currentMortgages === 'one-mortgage' || data.loanDetails.currentMortgages === 'two-mortgages',
     defaultValue: 0,
     helpText: 'Remaining balance on your current mortgage'
   },
 
   {
     fieldName: 'currentInterestRate',
-    showWhen: (data) => data.loanDetails.purpose === 'refinance' || data.loanDetails.purpose === 'cash-out-refinance',
-    requiredWhen: (data) => data.loanDetails.purpose === 'refinance' || data.loanDetails.purpose === 'cash-out-refinance',
+    showWhen: (data) => data.loanDetails.currentMortgages === 'one-mortgage' || data.loanDetails.currentMortgages === 'two-mortgages',
+    requiredWhen: (data) => data.loanDetails.currentMortgages === 'one-mortgage' || data.loanDetails.currentMortgages === 'two-mortgages',
     defaultValue: 5.5,
     helpText: 'Current mortgage interest rate (%)'
   },
 
   {
-    fieldName: 'cashOutAmount',
-    showWhen: (data) => data.loanDetails.purpose === 'cash-out-refinance',
-    requiredWhen: (data) => data.loanDetails.purpose === 'cash-out-refinance',
+    fieldName: 'secondMortgageBalance',
+    showWhen: (data) => data.loanDetails.currentMortgages === 'two-mortgages',
+    requiredWhen: (data) => data.loanDetails.currentMortgages === 'two-mortgages',
     defaultValue: 0,
-    helpText: 'How much cash would you like to take out?'
+    helpText: 'Balance on your second mortgage'
   },
 
   // Show employment details based on employment status
@@ -87,7 +87,7 @@ export const conditionalFields: ConditionalField[] = [
   // Show co-applicant fields for joint applications
   {
     fieldName: 'hasCoApplicant',
-    showWhen: (data) => data.loanDetails.purpose === 'purchase',
+    showWhen: (data) => data.loanDetails.loanPurpose === 'home-improvement' || data.loanDetails.loanPurpose === 'investment-purposes',
     helpText: 'Will someone else be on the mortgage application?'
   },
 
@@ -106,12 +106,12 @@ export const conditionalFields: ConditionalField[] = [
     helpText: 'Total liquid assets (savings, investments, etc.)'
   },
 
-  // Show timeline urgency fields
+  // Show high-priority fields based on loan purpose urgency
   {
     fieldName: 'preApprovalNeeded',
-    showWhen: (data) => data.loanDetails.timeline === '30-days',
+    showWhen: (data) => data.loanDetails.loanPurpose === 'home-improvement' || data.loanDetails.loanPurpose === 'debt-consolidation',
     defaultValue: true,
-    helpText: 'Fast timeline - pre-approval highly recommended'
+    helpText: 'Pre-approval recommended for your loan purpose'
   }
 ];
 
@@ -123,10 +123,16 @@ export function getFormSteps(formData: FormData): FormStep[] {
       title: 'Loan Details',
       subtitle: 'Tell us about your loan needs',
       fields: [
-        { fieldName: 'amount', showWhen: () => true },
+        { fieldName: 'isHomeowner', showWhen: () => true },
         { fieldName: 'propertyType', showWhen: () => true },
-        { fieldName: 'purpose', showWhen: () => true },
-        { fieldName: 'timeline', showWhen: () => true }
+        { fieldName: 'propertyUsage', showWhen: () => true },
+        { fieldName: 'propertyValue', showWhen: () => true },
+        { fieldName: 'currentMortgages', showWhen: () => true },
+        { fieldName: 'loanAmount', showWhen: () => true },
+        { fieldName: 'loanPurpose', showWhen: () => true },
+        { fieldName: 'creditHistory', showWhen: () => true },
+        { fieldName: 'creditScore', showWhen: () => true },
+        { fieldName: 'province', showWhen: () => true }
       ],
       estimatedTime: 2
     },
@@ -171,12 +177,12 @@ export function getFormSteps(formData: FormData): FormStep[] {
   // Add conditional steps based on form data
   const conditionalSteps: FormStep[] = [];
 
-  // Add refinance details step
-  if (formData.loanDetails.purpose === 'refinance' || formData.loanDetails.purpose === 'cash-out-refinance') {
+  // Add mortgage details step for existing mortgages
+  if (formData.loanDetails.currentMortgages === 'one-mortgage' || formData.loanDetails.currentMortgages === 'two-mortgages') {
     conditionalSteps.push({
       stepNumber: 2.5,
       title: 'Current Mortgage Details',
-      subtitle: 'Information about your existing mortgage',
+      subtitle: 'Information about your existing mortgage(s)',
       fields: [
         { fieldName: 'currentMortgageBalance', showWhen: () => true },
         { fieldName: 'currentInterestRate', showWhen: () => true },
@@ -254,14 +260,23 @@ export function getDynamicSuggestions(formData: FormData) {
     suggestions.push('Consider saving for a 20% down payment to avoid mortgage insurance');
   }
 
-  // Timeline suggestions
-  if (formData.loanDetails.timeline === '30-days') {
-    suggestions.push('Fast timeline detected - consider getting pre-approved immediately');
+  // Loan purpose suggestions
+  if (formData.loanDetails.loanPurpose === 'home-improvement') {
+    suggestions.push('Home improvement loans may have different requirements and rates');
+  }
+
+  if (formData.loanDetails.loanPurpose === 'debt-consolidation') {
+    suggestions.push('Debt consolidation can help simplify your finances and potentially reduce payments');
   }
 
   // Credit score suggestions
-  if (formData.financialInfo.creditScore === 'fair' || formData.financialInfo.creditScore === 'poor') {
+  if (formData.loanDetails.creditScore === 'fair-600-659' || formData.loanDetails.creditScore === 'needs-work-599') {
     suggestions.push('Improving your credit score could help you qualify for better rates');
+  }
+
+  // Credit history suggestions
+  if (formData.loanDetails.creditHistory && formData.loanDetails.creditHistory !== 'none') {
+    suggestions.push('Past credit issues may affect rates - we can help find suitable lenders');
   }
 
   // Property type suggestions
@@ -281,13 +296,14 @@ export function getDynamicSuggestions(formData: FormData) {
 export function getSmartFieldValue(fieldName: string, formData: FormData): any {
   switch (fieldName) {
     case 'monthlyPayment':
-      // Calculate estimated monthly payment for refinance
-      if (formData.loanDetails.purpose === 'refinance') {
-        const loanAmount = formData.loanDetails.amount;
+      // Calculate estimated monthly payment for existing mortgages
+      if (formData.loanDetails.currentMortgages === 'one-mortgage' || formData.loanDetails.currentMortgages === 'two-mortgages') {
+        // Estimate based on property value and typical loan amounts
+        const estimatedLoanAmount = formData.propertyInfo.propertyValue * 0.7; // Rough estimate
         const rate = 0.0589; // Current 5-year rate
         const monthlyRate = rate / 12;
         const numPayments = 25 * 12;
-        return Math.round(loanAmount * monthlyRate / (1 - Math.pow(1 + monthlyRate, -numPayments)));
+        return Math.round(estimatedLoanAmount * monthlyRate / (1 - Math.pow(1 + monthlyRate, -numPayments)));
       }
       break;
 
@@ -328,8 +344,32 @@ export function getConditionalValidationRules(fieldName: string, formData: FormD
       break;
 
     case 'loanAmount':
-      // Adjust max loan based on down payment
-      rules.max = formData.propertyInfo.propertyValue - formData.propertyInfo.downPayment;
+      // Validate loan amount ranges
+      switch (formData.loanDetails.loanAmount) {
+        case 'below-25k':
+          rules.min = 0;
+          rules.max = 25000;
+          break;
+        case '25k-50k':
+          rules.min = 25000;
+          rules.max = 50000;
+          break;
+        case '50k-75k':
+          rules.min = 50000;
+          rules.max = 75000;
+          break;
+        case '75k-100k':
+          rules.min = 75000;
+          rules.max = 100000;
+          break;
+        case '100k-200k':
+          rules.min = 100000;
+          rules.max = 200000;
+          break;
+        case 'above-200k':
+          rules.min = 200000;
+          break;
+      }
       break;
 
     case 'selfEmploymentYears':

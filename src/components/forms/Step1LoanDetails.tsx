@@ -1,183 +1,164 @@
 import React from 'react';
 import { FormStepProps } from '../../types';
-import { formatNumberWithCommas } from '../../utils/formatting';
 
 export default function Step1LoanDetails({
   formData,
   updateFormData,
   nextStep,
-  errors,
-  setErrors
+  errors
 }: FormStepProps) {
-  const handleNext = () => {
-    console.log('Step 1 - Loan Details:', formData.loanDetails);
-    nextStep();
-  };
-
-  const handleAmountChange = (value: string) => {
-    // Remove commas and non-numeric characters except decimal point
-    const cleanValue = value.replace(/[^\d]/g, '');
-    const numericValue = parseInt(cleanValue) || 0;
-
+  const handleSelection = (isHomeowner: boolean) => {
+    console.log('Step 1 - Is Homeowner:', isHomeowner);
     updateFormData({
-      loanDetails: { ...formData.loanDetails, amount: numericValue }
+      loanDetails: { ...formData.loanDetails, isHomeowner }
     });
+    setTimeout(nextStep, 600);
   };
-
-  const propertyTypes = [
-    { value: 'single-family', label: 'Single Family Home', icon: '🏠' },
-    { value: 'condo', label: 'Condominium', icon: '🏢' },
-    { value: 'townhouse', label: 'Townhouse', icon: '🏘️' },
-    { value: 'multi-family', label: 'Multi-Family', icon: '🏠' }
-  ];
-
-  const purposes = [
-    { value: 'purchase', label: 'Purchase', description: 'Buying a new home' },
-    { value: 'refinance', label: 'Refinance', description: 'Lower your rate or payment' },
-    { value: 'cash-out-refinance', label: 'Cash-Out Refinance', description: 'Access your equity' }
-  ];
-
-  const timelines = [
-    { value: '30-days', label: '30 days or less', urgent: true },
-    { value: '60-days', label: '30-60 days', popular: true },
-    { value: '90-days', label: '60-90 days' },
-    { value: 'no-rush', label: 'More than 90 days' }
-  ];
 
   return (
-    <div className="space-y-8">
-      <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
-          Let's start with your loan details
-        </h2>
-        <p className="text-gray-600">
-          Tell us about the loan you're looking for
-        </p>
-      </div>
-
-      {/* Loan Amount */}
-      <div>
-        <label className="block text-lg font-semibold text-gray-900 mb-3">
-          How much would you like to borrow?
-        </label>
-        <div className="relative">
-          <span className="absolute left-4 top-4 text-gray-500 text-lg">$</span>
-          <input
-            type="text"
-            value={formatNumberWithCommas(formData.loanDetails.amount)}
-            onChange={(e) => handleAmountChange(e.target.value)}
-            className={`w-full pl-10 pr-4 py-4 text-lg border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors ${
-              errors.amount ? 'border-red-500' : 'border-gray-300 focus:border-primary-500'
-            }`}
-            placeholder="400,000"
-          />
+    <div className="space-y-2 animate-fadeIn">
+        <div className="text-center">
+          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full mx-auto mb-2 flex items-center justify-center shadow-lg relative group">
+            <span className="text-xl">🏠</span>
+            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
+              Get personalized rates in under 2 minutes • FREE Consultation • No Credit Impact
+            </div>
+          </div>
+          <h2 className="text-lg font-bold text-gray-800 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            Expert Mortgage & Finance Advice 🇨🇦
+          </h2>
         </div>
-        {errors.amount && (
-          <p className="mt-2 text-red-600 text-sm">{errors.amount}</p>
-        )}
-      </div>
 
-      {/* Property Type */}
-      <div>
-        <label className="block text-lg font-semibold text-gray-900 mb-3">
-          What type of property is this?
-        </label>
-        <div className="grid grid-cols-2 gap-3">
-          {propertyTypes.map((type) => (
+        {/* Question */}
+        <div className="text-center">
+          <h3 className="text-xl font-bold text-gray-800 mb-4 relative group">
+            Are you a homeowner?
+            <span className="ml-1 text-gray-400 cursor-help">ℹ️</span>
+            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
+              This helps us provide you with the most relevant mortgage options
+            </div>
+          </h3>
+
+          <div className="space-y-6 max-w-2xl mx-auto">
             <button
-              key={type.value}
-              onClick={() => updateFormData({
-                loanDetails: { ...formData.loanDetails, propertyType: type.value as any }
-              })}
-              className={`p-4 rounded-lg border-2 text-left transition-colors ${
-                formData.loanDetails.propertyType === type.value
-                  ? 'border-primary-500 bg-primary-50 text-primary-900'
-                  : 'border-gray-300 hover:border-primary-300 hover:bg-primary-50'
+              onClick={() => handleSelection(true)}
+              className={`group w-full p-8 rounded-2xl border-3 text-left transition-all duration-500 transform hover:scale-105 hover:shadow-2xl active:scale-95 ${
+                formData.loanDetails.isHomeowner === true
+                  ? 'border-green-400 bg-gradient-to-r from-green-50 to-emerald-50 text-gray-900 shadow-2xl scale-105 ring-4 ring-green-200'
+                  : 'border-gray-300 hover:border-green-400 bg-white hover:bg-green-50 text-gray-800 shadow-lg hover:shadow-green-500/20'
               }`}
             >
+            <div className="flex items-center justify-between">
               <div className="flex items-center">
-                <span className="text-2xl mr-3">{type.icon}</span>
-                <span className="font-medium">{type.label}</span>
+                <div className={`w-20 h-20 rounded-2xl flex items-center justify-center mr-6 transition-all duration-300 ${
+                  formData.loanDetails.isHomeowner === true
+                    ? 'bg-green-100 group-hover:bg-green-200'
+                    : 'bg-green-100 group-hover:bg-green-200'
+                }`}>
+                  <span className="text-4xl group-hover:scale-110 transition-transform">✅</span>
+                </div>
+                <div>
+                  <span className="font-bold text-3xl block mb-2">Yes, I own a home</span>
+                  <span className={`text-lg ${formData.loanDetails.isHomeowner === true ? 'text-gray-700' : 'text-gray-400'}`}>
+                    Refinance, home equity, or second mortgage
+                  </span>
+                </div>
               </div>
-            </button>
-          ))}
-        </div>
-        {errors.propertyType && (
-          <p className="mt-2 text-red-600 text-sm">{errors.propertyType}</p>
-        )}
-      </div>
+              <div className={`w-10 h-10 rounded-full border-4 transition-all duration-300 ${
+                formData.loanDetails.isHomeowner === true
+                  ? 'border-green-500 bg-green-500 shadow-xl'
+                  : 'border-gray-400 group-hover:border-green-400'
+              }`}>
+                {formData.loanDetails.isHomeowner === true && (
+                  <div className="w-full h-full rounded-full bg-white flex items-center justify-center animate-bounce">
+                    <svg className="w-6 h-6 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                )}
+              </div>
+            </div>
+          </button>
 
-      {/* Loan Purpose */}
-      <div>
-        <label className="block text-lg font-semibold text-gray-900 mb-3">
-          What's the purpose of this loan?
-        </label>
-        <div className="space-y-3">
-          {purposes.map((purpose) => (
             <button
-              key={purpose.value}
-              onClick={() => updateFormData({
-                loanDetails: { ...formData.loanDetails, purpose: purpose.value as any }
-              })}
-              className={`w-full p-4 rounded-lg border-2 text-left transition-colors ${
-                formData.loanDetails.purpose === purpose.value
-                  ? 'border-primary-500 bg-primary-50 text-primary-900'
-                  : 'border-gray-300 hover:border-primary-300 hover:bg-primary-50'
+              onClick={() => handleSelection(false)}
+              className={`group w-full p-8 rounded-2xl border-3 text-left transition-all duration-500 transform hover:scale-105 hover:shadow-2xl active:scale-95 ${
+                formData.loanDetails.isHomeowner === false
+                  ? 'border-blue-400 bg-gradient-to-r from-blue-50 to-indigo-50 text-gray-900 shadow-2xl scale-105 ring-4 ring-blue-200'
+                  : 'border-gray-300 hover:border-blue-400 bg-white hover:bg-blue-50 text-gray-800 shadow-lg hover:shadow-blue-500/20'
               }`}
             >
-              <div className="font-medium mb-1">{purpose.label}</div>
-              <div className="text-sm text-gray-600">{purpose.description}</div>
-            </button>
-          ))}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <div className={`w-20 h-20 rounded-2xl flex items-center justify-center mr-6 transition-all duration-300 ${
+                  formData.loanDetails.isHomeowner === false
+                    ? 'bg-blue-100 group-hover:bg-blue-200'
+                    : 'bg-blue-100 group-hover:bg-blue-200'
+                }`}>
+                  <span className="text-4xl group-hover:scale-110 transition-transform">🏡</span>
+                </div>
+                <div>
+                  <span className="font-bold text-3xl block mb-2">No, I'm looking to buy</span>
+                  <span className={`text-lg ${formData.loanDetails.isHomeowner === false ? 'text-gray-700' : 'text-gray-400'}`}>
+                    First-time buyer or purchasing a new home
+                  </span>
+                </div>
+              </div>
+              <div className={`w-10 h-10 rounded-full border-4 transition-all duration-300 ${
+                formData.loanDetails.isHomeowner === false
+                  ? 'border-blue-500 bg-blue-500 shadow-xl'
+                  : 'border-gray-400 group-hover:border-blue-400'
+              }`}>
+                {formData.loanDetails.isHomeowner === false && (
+                  <div className="w-full h-full rounded-full bg-white flex items-center justify-center animate-bounce">
+                    <svg className="w-6 h-6 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                )}
+              </div>
+            </div>
+          </button>
         </div>
-        {errors.purpose && (
-          <p className="mt-2 text-red-600 text-sm">{errors.purpose}</p>
-        )}
-      </div>
 
-      {/* Timeline */}
-      <div>
-        <label className="block text-lg font-semibold text-gray-900 mb-3">
-          When do you need this loan?
-        </label>
-        <div className="grid grid-cols-2 gap-3">
-          {timelines.map((timeline) => (
+          {errors.isHomeowner && (
+            <div className="mt-8 p-6 bg-red-50 border-2 border-red-200 rounded-xl animate-shake">
+              <p className="text-red-600 text-lg flex items-center justify-center">
+                <svg className="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+                {errors.isHomeowner}
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Navigation Buttons */}
+        <div className="flex justify-between pt-8">
+          <div></div>
+          {formData.loanDetails.isHomeowner !== undefined && (
             <button
-              key={timeline.value}
-              onClick={() => updateFormData({
-                loanDetails: { ...formData.loanDetails, timeline: timeline.value as any }
-              })}
-              className={`p-4 rounded-lg border-2 text-center transition-colors relative ${
-                formData.loanDetails.timeline === timeline.value
-                  ? 'border-primary-500 bg-primary-50 text-primary-900'
-                  : 'border-gray-300 hover:border-primary-300 hover:bg-primary-50'
-              }`}
+              onClick={() => nextStep()}
+              className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl flex-1 max-w-md animate-glow"
             >
-              {timeline.urgent && (
-                <span className="absolute top-2 right-2 text-xs bg-red-500 text-white px-2 py-1 rounded-full">
-                  Urgent
-                </span>
-              )}
-              {timeline.popular && (
-                <span className="absolute top-2 right-2 text-xs bg-green-500 text-white px-2 py-1 rounded-full">
-                  Popular
-                </span>
-              )}
-              <span className="font-medium">{timeline.label}</span>
+              <span className="flex items-center justify-center">
+                Continue
+                <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </span>
             </button>
-          ))}
+          )}
         </div>
-      </div>
 
-      {/* Continue Button */}
-      <div className="flex justify-center pt-6">
-        <button
-          onClick={handleNext}
-          className="bg-primary-800 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-primary-900 transition-colors shadow-lg hover:shadow-xl"
-        >
-          Continue to Property Details
-        </button>
-      </div>
+        {/* Progress indicator */}
+        <div className="text-center mt-12">
+          <div className="flex items-center justify-center space-x-3 text-gray-600 text-lg">
+            <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
+            <span className="font-medium">Step 1 of 11</span>
+            <div className="text-sm text-gray-900">• Takes only 2 minutes</div>
+          </div>
+        </div>
     </div>
   );
 }

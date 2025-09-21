@@ -92,7 +92,7 @@ class AnalyticsManager {
     this.track('form_abandonment', {
       step_number: stepNumber,
       time_spent_seconds: timeSpent,
-      completion_percentage: (stepNumber / 4) * 100
+      completion_percentage: (stepNumber / 11) * 100
     });
   }
 
@@ -215,25 +215,34 @@ class AnalyticsManager {
     const sanitized: any = {};
 
     if (formData.loanDetails) {
-      sanitized.loan_amount = formData.loanDetails.amount;
+      sanitized.is_homeowner = formData.loanDetails.isHomeowner;
       sanitized.property_type = formData.loanDetails.propertyType;
-      sanitized.loan_purpose = formData.loanDetails.purpose;
-      sanitized.timeline = formData.loanDetails.timeline;
+      sanitized.property_usage = formData.loanDetails.propertyUsage;
+      sanitized.property_value = formData.loanDetails.propertyValue;
+      sanitized.current_mortgages = formData.loanDetails.currentMortgages;
+      sanitized.loan_amount = formData.loanDetails.loanAmount;
+      sanitized.loan_purpose = formData.loanDetails.loanPurpose;
+      sanitized.credit_history = formData.loanDetails.creditHistory;
+      sanitized.credit_score = formData.loanDetails.creditScore;
+      sanitized.province = formData.loanDetails.province;
     }
 
     if (formData.propertyInfo) {
-      sanitized.province = formData.propertyInfo.province;
-      sanitized.property_value = formData.propertyInfo.propertyValue;
+      sanitized.property_value_numeric = formData.propertyInfo.propertyValue;
       sanitized.down_payment = formData.propertyInfo.downPayment;
-      sanitized.down_payment_percentage = Math.round((formData.propertyInfo.downPayment / formData.propertyInfo.propertyValue) * 100);
+      sanitized.down_payment_percentage = formData.propertyInfo.propertyValue > 0 ? Math.round((formData.propertyInfo.downPayment / formData.propertyInfo.propertyValue) * 100) : 0;
       sanitized.first_time_buyer = formData.propertyInfo.firstTimeHomeBuyer;
     }
 
     if (formData.financialInfo) {
-      sanitized.credit_score_range = formData.financialInfo.creditScore;
       sanitized.employment_status = formData.financialInfo.employmentStatus;
       // Income ranges instead of exact amounts
       sanitized.income_range = this.getIncomeRange(formData.financialInfo.annualIncome);
+    }
+
+    if (formData.personalInfo) {
+      // Only include non-sensitive contact preferences
+      sanitized.has_contact_info = !!(formData.personalInfo.firstName && formData.personalInfo.email);
     }
 
     return sanitized;

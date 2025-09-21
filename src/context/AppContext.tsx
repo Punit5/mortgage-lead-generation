@@ -23,12 +23,7 @@ type AppAction =
 
 const initialState: AppState = {
   formData: {
-    loanDetails: {
-      amount: 600000,
-      propertyType: 'single-family',
-      purpose: 'purchase',
-      timeline: '60-days'
-    },
+    loanDetails: {},
     propertyInfo: {
       province: '',
       propertyValue: 750000,
@@ -84,7 +79,7 @@ function appReducer(state: AppState, action: AppAction): AppState {
         ...state,
         formData: {
           ...state.formData,
-          currentStep: Math.min(state.formData.currentStep + 1, 4)
+          currentStep: Math.min(state.formData.currentStep + 1, 11)
         }
       };
     case 'PREV_STEP':

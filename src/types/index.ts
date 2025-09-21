@@ -1,8 +1,14 @@
 export interface LoanDetails {
-  amount: number;
-  propertyType: 'single-family' | 'condo' | 'townhouse' | 'multi-family';
-  purpose: 'purchase' | 'refinance' | 'cash-out-refinance';
-  timeline: '30-days' | '60-days' | '90-days' | 'no-rush';
+  isHomeowner?: boolean;
+  propertyType?: 'single-family' | 'townhome' | 'condominium' | 'multi-family';
+  propertyUsage?: 'primary-home' | 'secondary-home' | 'rental';
+  propertyValue?: 'below-300k' | '300k-600k' | '600k-900k' | '900k-1200k' | '1200k-1500k' | '1500k-2000k' | 'above-2000k';
+  currentMortgages?: 'paid-off' | 'one-mortgage' | 'two-mortgages';
+  loanAmount?: 'below-25k' | '25k-50k' | '50k-75k' | '75k-100k' | '100k-200k' | 'above-200k';
+  loanPurpose?: 'home-improvement' | 'retirement-income' | 'debt-consolidation' | 'investment-purposes';
+  creditHistory?: 'bankruptcy' | 'foreclosure' | 'consumer-proposal' | 'none';
+  creditScore?: 'excellent-780+' | 'very-good-720-779' | 'good-660-719' | 'fair-600-659' | 'needs-work-599';
+  province?: 'alberta' | 'british-columbia' | 'manitoba' | 'ontario' | 'saskatchewan';
 }
 
 export interface PropertyInfo {

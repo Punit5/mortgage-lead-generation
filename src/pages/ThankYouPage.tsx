@@ -73,19 +73,19 @@ export default function ThankYouPage() {
               <div className="text-left">
                 <div className="mb-2">
                   <span className="font-medium text-gray-700">Loan Amount:</span>
-                  <span className="ml-2">${formData.loanDetails.amount.toLocaleString()}</span>
+                  <span className="ml-2">{formData.loanDetails.loanAmount ? formData.loanDetails.loanAmount.replace('-', ' ') : 'Not specified'}</span>
                 </div>
                 <div className="mb-2">
                   <span className="font-medium text-gray-700">Property Type:</span>
-                  <span className="ml-2 capitalize">{formData.loanDetails.propertyType.replace('-', ' ')}</span>
+                  <span className="ml-2 capitalize">{formData.loanDetails.propertyType?.replace('-', ' ') || 'Not specified'}</span>
                 </div>
                 <div className="mb-2">
                   <span className="font-medium text-gray-700">Loan Purpose:</span>
-                  <span className="ml-2 capitalize">{formData.loanDetails.purpose.replace('-', ' ')}</span>
+                  <span className="ml-2 capitalize">{formData.loanDetails.loanPurpose?.replace('-', ' ') || 'Not specified'}</span>
                 </div>
                 <div className="mb-2">
-                  <span className="font-medium text-gray-700">Timeline:</span>
-                  <span className="ml-2 capitalize">{formData.loanDetails.timeline.replace('-', ' ')}</span>
+                  <span className="font-medium text-gray-700">Homeowner:</span>
+                  <span className="ml-2">{formData.loanDetails.isHomeowner ? 'Yes' : 'No'}</span>
                 </div>
               </div>
 

@@ -199,10 +199,16 @@ export function generateSmartDefaults(
 
   const defaults: Partial<FormData> = {
     loanDetails: {
-      amount: marketData.recommendedLoanAmount,
-      propertyType: marketData.popularPropertyTypes[0] as any,
-      purpose: 'purchase',
-      timeline: '60-days'
+      isHomeowner: false,
+      propertyType: marketData.popularPropertyTypes[0].replace('single-family', 'single-family') as any,
+      propertyUsage: 'primary-home',
+      propertyValue: '600k-900k',
+      currentMortgages: 'paid-off',
+      loanAmount: '100k-200k',
+      loanPurpose: 'home-improvement',
+      creditHistory: 'none',
+      creditScore: 'good-660-719',
+      province: 'british-columbia'
     },
     propertyInfo: {
       province: location?.province || 'BC',
@@ -226,17 +232,35 @@ export function generateSmartDefaults(
     // Only merge defined values from userPreferences
     if (userPreferences.loanDetails && defaults.loanDetails) {
       result.loanDetails = { ...defaults.loanDetails };
-      if (userPreferences.loanDetails.amount !== undefined) {
-        result.loanDetails.amount = userPreferences.loanDetails.amount;
+      if (userPreferences.loanDetails.isHomeowner !== undefined) {
+        result.loanDetails.isHomeowner = userPreferences.loanDetails.isHomeowner;
       }
       if (userPreferences.loanDetails.propertyType) {
         result.loanDetails.propertyType = userPreferences.loanDetails.propertyType;
       }
-      if (userPreferences.loanDetails.purpose) {
-        result.loanDetails.purpose = userPreferences.loanDetails.purpose;
+      if (userPreferences.loanDetails.propertyUsage) {
+        result.loanDetails.propertyUsage = userPreferences.loanDetails.propertyUsage;
       }
-      if (userPreferences.loanDetails.timeline) {
-        result.loanDetails.timeline = userPreferences.loanDetails.timeline;
+      if (userPreferences.loanDetails.propertyValue) {
+        result.loanDetails.propertyValue = userPreferences.loanDetails.propertyValue;
+      }
+      if (userPreferences.loanDetails.currentMortgages) {
+        result.loanDetails.currentMortgages = userPreferences.loanDetails.currentMortgages;
+      }
+      if (userPreferences.loanDetails.loanAmount) {
+        result.loanDetails.loanAmount = userPreferences.loanDetails.loanAmount;
+      }
+      if (userPreferences.loanDetails.loanPurpose) {
+        result.loanDetails.loanPurpose = userPreferences.loanDetails.loanPurpose;
+      }
+      if (userPreferences.loanDetails.creditHistory) {
+        result.loanDetails.creditHistory = userPreferences.loanDetails.creditHistory;
+      }
+      if (userPreferences.loanDetails.creditScore) {
+        result.loanDetails.creditScore = userPreferences.loanDetails.creditScore;
+      }
+      if (userPreferences.loanDetails.province) {
+        result.loanDetails.province = userPreferences.loanDetails.province;
       }
     }
 
@@ -294,9 +318,9 @@ export function getLocationBasedRecommendations(location?: LocationData | null) 
     message: `Based on ${city} market data:`,
     recommendations: [
       {
-        title: 'Recommended Loan Amount',
-        value: `$${marketData.recommendedLoanAmount.toLocaleString()}`,
-        description: `Average for ${city} homebuyers`
+        title: 'Recommended Property Value Range',
+        value: '$600K - $900K',
+        description: `Typical range for ${city} homebuyers`
       },
       {
         title: 'Typical Down Payment',
