@@ -1,19 +1,26 @@
 import React from 'react';
 import { FormStepProps } from '../../types';
+import { useApp } from '../../context/AppContext';
 
 export default function Step7LoanPurpose({
   formData,
   updateFormData,
   nextStep,
   prevStep,
-  errors
+  errors,
+  setErrors
 }: FormStepProps) {
+  const { nextStep: directNextStep } = useApp();
   const handleSelection = (purpose: string) => {
     console.log('Step 7 - Loan Purpose:', purpose);
     updateFormData({
       loanDetails: { ...formData.loanDetails, loanPurpose: purpose as any }
     });
-    setTimeout(nextStep, 600);
+    setErrors({});
+    setTimeout(() => {
+      setErrors({});
+      directNextStep();
+    }, 600);
   };
 
   const loanPurposes = [

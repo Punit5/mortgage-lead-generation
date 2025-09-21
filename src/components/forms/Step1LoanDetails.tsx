@@ -1,18 +1,31 @@
 import React from 'react';
 import { FormStepProps } from '../../types';
+import { useLanguage } from '../../contexts/LanguageContext';
+import { useApp } from '../../context/AppContext';
 
 export default function Step1LoanDetails({
   formData,
   updateFormData,
   nextStep,
-  errors
+  prevStep,
+  errors,
+  setErrors
 }: FormStepProps) {
+  const { t } = useLanguage();
+  const { nextStep: directNextStep } = useApp();
+
   const handleSelection = (isHomeowner: boolean) => {
     console.log('Step 1 - Is Homeowner:', isHomeowner);
     updateFormData({
       loanDetails: { ...formData.loanDetails, isHomeowner }
     });
-    setTimeout(nextStep, 600);
+    // Clear any existing validation errors immediately
+    setErrors({});
+    // Use direct nextStep to bypass validation
+    setTimeout(() => {
+      setErrors({});
+      directNextStep(); // This skips the validation in MultiStepForm
+    }, 600);
   };
 
   return (
@@ -21,21 +34,21 @@ export default function Step1LoanDetails({
           <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full mx-auto mb-2 flex items-center justify-center shadow-lg relative group">
             <span className="text-xl">🏠</span>
             <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
-              Get personalized rates in under 2 minutes • FREE Consultation • No Credit Impact
+              {t('step1.tooltip')}
             </div>
           </div>
           <h2 className="text-lg font-bold text-gray-800 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Expert Mortgage & Finance Advice 🇨🇦
+            {t('step1.title')}
           </h2>
         </div>
 
         {/* Question */}
         <div className="text-center">
           <h3 className="text-xl font-bold text-gray-800 mb-4 relative group">
-            Are you a homeowner?
+            {t('step1.question')}
             <span className="ml-1 text-gray-400 cursor-help">ℹ️</span>
             <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
-              This helps us provide you with the most relevant mortgage options
+              {t('step1.questionTooltip')}
             </div>
           </h3>
 
@@ -58,9 +71,9 @@ export default function Step1LoanDetails({
                   <span className="text-4xl group-hover:scale-110 transition-transform">✅</span>
                 </div>
                 <div>
-                  <span className="font-bold text-3xl block mb-2">Yes, I own a home</span>
+                  <span className="font-bold text-3xl block mb-2">{t('step1.yes.title')}</span>
                   <span className={`text-lg ${formData.loanDetails.isHomeowner === true ? 'text-gray-700' : 'text-gray-400'}`}>
-                    Refinance, home equity, or second mortgage
+                    {t('step1.yes.description')}
                   </span>
                 </div>
               </div>
@@ -98,9 +111,9 @@ export default function Step1LoanDetails({
                   <span className="text-4xl group-hover:scale-110 transition-transform">🏡</span>
                 </div>
                 <div>
-                  <span className="font-bold text-3xl block mb-2">No, I'm looking to buy</span>
+                  <span className="font-bold text-3xl block mb-2">{t('step1.no.title')}</span>
                   <span className={`text-lg ${formData.loanDetails.isHomeowner === false ? 'text-gray-700' : 'text-gray-400'}`}>
-                    First-time buyer or purchasing a new home
+                    {t('step1.no.description')}
                   </span>
                 </div>
               </div>
@@ -142,7 +155,7 @@ export default function Step1LoanDetails({
               className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl flex-1 max-w-md animate-glow"
             >
               <span className="flex items-center justify-center">
-                Continue
+{t('common.continue')}
                 <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
@@ -155,8 +168,8 @@ export default function Step1LoanDetails({
         <div className="text-center mt-12">
           <div className="flex items-center justify-center space-x-3 text-gray-600 text-lg">
             <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
-            <span className="font-medium">Step 1 of 11</span>
-            <div className="text-sm text-gray-900">• Takes only 2 minutes</div>
+            <span className="font-medium">{t('common.stepProgress', { current: 1, total: 11 })}</span>
+            <div className="text-sm text-gray-900">• {t('step1.timeEstimate')}</div>
           </div>
         </div>
     </div>

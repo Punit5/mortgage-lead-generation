@@ -1,19 +1,28 @@
 import React from 'react';
 import { FormStepProps } from '../../types';
+import { useApp } from '../../context/AppContext';
 
 export default function Step2PropertyInfo({
   formData,
   updateFormData,
   nextStep,
   prevStep,
-  errors
+  errors,
+  setErrors
 }: FormStepProps) {
+  const { nextStep: directNextStep } = useApp();
+
   const handleSelection = (propertyType: string) => {
     console.log('Step 2 - Property Type:', propertyType);
     updateFormData({
       loanDetails: { ...formData.loanDetails, propertyType: propertyType as any }
     });
-    setTimeout(nextStep, 600);
+    setErrors({});
+    // Use direct nextStep to bypass validation
+    setTimeout(() => {
+      setErrors({});
+      directNextStep(); // This skips the validation in MultiStepForm
+    }, 600);
   };
 
   const propertyTypes = [

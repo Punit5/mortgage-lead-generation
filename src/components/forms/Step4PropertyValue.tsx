@@ -1,19 +1,26 @@
 import React from 'react';
 import { FormStepProps } from '../../types';
+import { useApp } from '../../context/AppContext';
 
 export default function Step4PropertyValue({
   formData,
   updateFormData,
   nextStep,
   prevStep,
-  errors
+  errors,
+  setErrors
 }: FormStepProps) {
+  const { nextStep: directNextStep } = useApp();
   const handleSelection = (valueRange: string) => {
     console.log('Step 4 - Property Value:', valueRange);
     updateFormData({
       loanDetails: { ...formData.loanDetails, propertyValue: valueRange as any }
     });
-    setTimeout(nextStep, 600);
+    setErrors({});
+    setTimeout(() => {
+      setErrors({});
+      directNextStep();
+    }, 600);
   };
 
   const propertyValues = [

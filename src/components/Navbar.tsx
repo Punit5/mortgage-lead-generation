@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import LanguageSwitcher from './LanguageSwitcher';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const { t } = useLanguage();
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -31,7 +34,7 @@ export default function Navbar() {
                     : 'text-gray-700 hover:bg-primary-50 hover:text-primary-800'
                 }`}
               >
-                Home
+                {t('navbar.home')}
               </Link>
               <Link
                 to="/pre-approval"
@@ -41,7 +44,7 @@ export default function Navbar() {
                     : 'text-gray-700 hover:bg-primary-50 hover:text-primary-800'
                 }`}
               >
-                Get Pre-Approved
+                {t('navbar.getPreApproved')}
               </Link>
               <Link
                 to="/refinance"
@@ -51,7 +54,7 @@ export default function Navbar() {
                     : 'text-gray-700 hover:bg-primary-50 hover:text-primary-800'
                 }`}
               >
-                Refinance
+                {t('navbar.refinance')}
               </Link>
               <Link
                 to="/first-time-buyer"
@@ -61,18 +64,19 @@ export default function Navbar() {
                     : 'text-gray-700 hover:bg-primary-50 hover:text-primary-800'
                 }`}
               >
-                First-Time Buyers
+                {t('navbar.firstTimeBuyers')}
               </Link>
             </div>
           </div>
 
-          {/* CTA Button */}
-          <div className="hidden md:block">
+          {/* Language Switcher & CTA Button */}
+          <div className="hidden md:flex items-center space-x-4">
+            <LanguageSwitcher />
             <Link
               to="/pre-approval"
               className="bg-primary-800 text-white px-6 py-2 rounded-lg font-semibold hover:bg-primary-900 transition-colors shadow-md hover:shadow-lg"
             >
-              Check Your Rate
+              {t('navbar.checkYourRate')}
             </Link>
           </div>
 
@@ -111,7 +115,7 @@ export default function Navbar() {
               }`}
               onClick={() => setIsMenuOpen(false)}
             >
-              Home
+              {t('navbar.home')}
             </Link>
             <Link
               to="/pre-approval"
@@ -122,7 +126,7 @@ export default function Navbar() {
               }`}
               onClick={() => setIsMenuOpen(false)}
             >
-              Get Pre-Approved
+              {t('navbar.getPreApproved')}
             </Link>
             <Link
               to="/refinance"
@@ -133,7 +137,7 @@ export default function Navbar() {
               }`}
               onClick={() => setIsMenuOpen(false)}
             >
-              Refinance
+              {t('navbar.refinance')}
             </Link>
             <Link
               to="/first-time-buyer"
@@ -144,15 +148,18 @@ export default function Navbar() {
               }`}
               onClick={() => setIsMenuOpen(false)}
             >
-              First-Time Buyers
+              {t('navbar.firstTimeBuyers')}
             </Link>
-            <div className="px-3 py-2">
+            <div className="px-3 py-2 space-y-3">
+              <div className="flex justify-center">
+                <LanguageSwitcher />
+              </div>
               <Link
                 to="/pre-approval"
                 className="block w-full text-center bg-primary-800 text-white px-6 py-2 rounded-lg font-semibold hover:bg-primary-900 transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Check Your Rate
+                {t('navbar.checkYourRate')}
               </Link>
             </div>
           </div>

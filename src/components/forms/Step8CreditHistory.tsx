@@ -1,19 +1,26 @@
 import React from 'react';
 import { FormStepProps } from '../../types';
+import { useApp } from '../../context/AppContext';
 
 export default function Step8CreditHistory({
   formData,
   updateFormData,
   nextStep,
   prevStep,
-  errors
+  errors,
+  setErrors
 }: FormStepProps) {
+  const { nextStep: directNextStep } = useApp();
   const handleSelection = (history: string) => {
     console.log('Step 8 - Credit History:', history);
     updateFormData({
       loanDetails: { ...formData.loanDetails, creditHistory: history as any }
     });
-    setTimeout(nextStep, 600);
+    setErrors({});
+    setTimeout(() => {
+      setErrors({});
+      directNextStep();
+    }, 600);
   };
 
   const creditHistoryOptions = [

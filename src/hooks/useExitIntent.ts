@@ -26,18 +26,9 @@ export function useExitIntent() {
     document.addEventListener('mouseleave', handleMouseLeave);
     document.addEventListener('keydown', handleEscapeKey);
 
-    // Show after 30 seconds if user hasn't triggered exit intent
-    const timer = setTimeout(() => {
-      if (!hasShown && !showExitIntent) {
-        setShowExitIntent(true);
-        setHasShown(true);
-      }
-    }, 30000);
-
     return () => {
       document.removeEventListener('mouseleave', handleMouseLeave);
       document.removeEventListener('keydown', handleEscapeKey);
-      clearTimeout(timer);
     };
   }, [showExitIntent, hasShown]);
 

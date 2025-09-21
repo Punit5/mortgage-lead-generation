@@ -1,19 +1,26 @@
 import React from 'react';
 import { FormStepProps } from '../../types';
+import { useApp } from '../../context/AppContext';
 
 export default function Step5CurrentMortgages({
   formData,
   updateFormData,
   nextStep,
   prevStep,
-  errors
+  errors,
+  setErrors
 }: FormStepProps) {
+  const { nextStep: directNextStep } = useApp();
   const handleSelection = (mortgageCount: string) => {
     console.log('Step 5 - Current Mortgages:', mortgageCount);
     updateFormData({
       loanDetails: { ...formData.loanDetails, currentMortgages: mortgageCount as any }
     });
-    setTimeout(nextStep, 600);
+    setErrors({});
+    setTimeout(() => {
+      setErrors({});
+      directNextStep();
+    }, 600);
   };
 
   const mortgageOptions = [

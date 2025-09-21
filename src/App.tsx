@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AppProvider } from './context/AppContext';
+import { LanguageProvider } from './contexts/LanguageContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ExitIntentPopup from './components/ExitIntentPopup';
@@ -34,11 +35,13 @@ function AppContent() {
 
 function App() {
   return (
-    <AppProvider>
-      <Router>
-        <AppContent />
-      </Router>
-    </AppProvider>
+    <LanguageProvider>
+      <AppProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </AppProvider>
+    </LanguageProvider>
   );
 }
 

@@ -1,19 +1,27 @@
 import React from 'react';
 import { FormStepProps } from '../../types';
+import { useApp } from '../../context/AppContext';
 
 export default function Step3PropertyUsage({
   formData,
   updateFormData,
   nextStep,
   prevStep,
-  errors
+  errors,
+  setErrors
 }: FormStepProps) {
+  const { nextStep: directNextStep } = useApp();
+
   const handleSelection = (usageValue: string) => {
     console.log('Step 3 - Property Usage:', usageValue);
     updateFormData({
       loanDetails: { ...formData.loanDetails, propertyUsage: usageValue as any }
     });
-    setTimeout(nextStep, 600);
+    setErrors({});
+    setTimeout(() => {
+      setErrors({});
+      directNextStep();
+    }, 600);
   };
 
   const propertyUsages = [
