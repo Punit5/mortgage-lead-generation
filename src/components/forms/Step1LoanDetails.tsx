@@ -31,7 +31,7 @@ export default function Step1LoanDetails({
   return (
     <div className="space-y-2 animate-fadeIn">
         <div className="text-center">
-          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full mx-auto mb-2 flex items-center justify-center shadow-lg relative group">
+          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full mx-auto mb-1 flex items-center justify-center shadow-lg relative group">
             <span className="text-xl">🏠</span>
             <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
               {t('step1.tooltip')}
@@ -165,7 +165,7 @@ export default function Step1LoanDetails({
         </div>
 
         {/* Progress indicator */}
-        <div className="text-center mt-12">
+        <div className="text-center mt-6">
           <div className="flex items-center justify-center space-x-3 text-gray-600 text-lg">
             <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
             <span className="font-medium">{t('common.stepProgress', { current: 1, total: 11 })}</span>

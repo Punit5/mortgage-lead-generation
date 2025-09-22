@@ -10,44 +10,40 @@ export default function ProgressBar({ currentStep, totalSteps, stepLabels }: Pro
   const progress = (currentStep / totalSteps) * 100;
 
   const defaultLabels = [
-    'Start',
+    'Homeowner',
     'Property',
-    'Usage',
-    'Value',
-    'Mortgage',
-    'Amount',
-    'Purpose',
-    'Credit',
-    'Score',
-    'Location',
+    'Value & Loans',
+    'Loan Details',
+    'Credit History',
+    'Credit Score',
     'Contact'
   ];
 
   const labels = stepLabels || defaultLabels;
 
   return (
-    <div className="w-full mb-8">
+    <div className="w-full">
       {/* Enhanced Progress Header */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-2">
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
             <span className="text-white font-bold text-sm">{currentStep}</span>
           </div>
           <div>
-            <span className="text-lg font-bold text-white">
+            <span className="text-lg font-bold text-gray-900">
               Step {currentStep} of {totalSteps}
             </span>
-            <p className="text-gray-700 text-sm">
+            <p className="text-gray-900 text-sm">
               {labels[currentStep - 1]} • {Math.round(progress)}% Complete
             </p>
           </div>
         </div>
 
         <div className="text-right">
-          <div className="text-2xl font-bold text-white">
+          <div className="text-2xl font-bold text-gray-900">
             {Math.round(progress)}%
           </div>
-          <div className="text-xs text-gray-700">
+          <div className="text-xs text-gray-900">
             {totalSteps - currentStep} steps left
           </div>
         </div>
@@ -55,7 +51,7 @@ export default function ProgressBar({ currentStep, totalSteps, stepLabels }: Pro
 
       {/* Enhanced Progress Bar */}
       <div className="relative">
-        <div className="w-full bg-gray-200 rounded-full h-4 mb-6 shadow-inner">
+        <div className="w-full bg-gray-200 rounded-full h-4 mb-3 shadow-inner">
           <div
             className="progress-bar h-4 rounded-full transition-all duration-700 ease-out relative overflow-hidden"
             style={{ width: `${progress}%` }}
@@ -93,7 +89,7 @@ export default function ProgressBar({ currentStep, totalSteps, stepLabels }: Pro
                 )}
               </div>
               <span
-                className={`mt-2 text-xs font-medium text-center transition-colors ${
+                className={`mt-1 text-xs font-medium text-center transition-colors ${
                   isCompleted
                     ? 'text-green-400'
                     : isCurrent
@@ -121,7 +117,7 @@ export default function ProgressBar({ currentStep, totalSteps, stepLabels }: Pro
       </div>
 
       {/* Mobile Progress Dots */}
-      <div className="md:hidden flex justify-center space-x-2 mt-4">
+      <div className="md:hidden flex justify-center space-x-2 mt-2">
         {Array.from({ length: totalSteps }, (_, index) => (
           <div
             key={index}
@@ -137,7 +133,7 @@ export default function ProgressBar({ currentStep, totalSteps, stepLabels }: Pro
       </div>
 
       {/* Motivational Text */}
-      <div className="text-center mt-6">
+      <div className="text-center mt-3">
         <div className="text-gray-800 text-sm">
           {currentStep <= 3 && "🚀 You're off to a great start!"}
           {currentStep > 3 && currentStep <= 6 && "⭐ Great progress, keep going!"}

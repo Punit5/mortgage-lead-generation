@@ -27,7 +27,7 @@ export default function Step11ContactInfo({
       </div>
 
       {/* Contact Form */}
-      <div className="space-y-8 max-w-2xl mx-auto">
+      <div className="space-y-2 max-w-2xl mx-auto">
         {/* First Name */}
         <div className="relative group">
           <label className="block text-gray-800 text-lg font-medium mb-3 flex items-center">

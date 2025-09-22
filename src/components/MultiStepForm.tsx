@@ -1,22 +1,30 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 import { validateFormStep } from '../utils/validation';
 import ProgressBar from './ProgressBar';
 import Step1LoanDetails from './forms/Step1LoanDetails';
 import Step2PropertyInfo from './forms/Step2PropertyInfo';
-import Step3PropertyUsage from './forms/Step3PropertyUsage';
-import Step4PropertyValue from './forms/Step4PropertyValue';
-import Step5CurrentMortgages from './forms/Step5CurrentMortgages';
-import Step6LoanAmount from './forms/Step6LoanAmount';
-import Step7LoanPurpose from './forms/Step7LoanPurpose';
-import Step8CreditHistory from './forms/Step8CreditHistory';
-import Step9CreditScore from './forms/Step9CreditScore';
-import Step10Province from './forms/Step10Province';
-import Step11ContactInfo from './forms/Step11ContactInfo';
+import Step3PropertyDetails from './forms/Step3PropertyDetails';
+import Step4LoanDetails from './forms/Step4LoanDetails';
+import Step5CreditHistory from './forms/Step8CreditHistory';
+import Step6CreditScore from './forms/Step9CreditScore';
+import Step7ContactInfo from './forms/Step11ContactInfo';
 
 export default function MultiStepForm() {
   const { state, updateFormData, setErrors, nextStep, prevStep, resetForm } = useApp();
   const { formData, errors } = state;
+  const formContentRef = useRef<HTMLDivElement>(null);
+  const progressBarRef = useRef<HTMLDivElement>(null);
+
+  // Scroll to progress bar whenever the step changes
+  useEffect(() => {
+    if (progressBarRef.current) {
+      progressBarRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  }, [formData.currentStep]);
 
   const scrollToFirstError = () => {
     setTimeout(() => {
@@ -70,23 +78,15 @@ export default function MultiStepForm() {
       case 2:
         return <Step2PropertyInfo {...stepProps} />;
       case 3:
-        return <Step3PropertyUsage {...stepProps} />;
+        return <Step3PropertyDetails {...stepProps} />;
       case 4:
-        return <Step4PropertyValue {...stepProps} />;
+        return <Step4LoanDetails {...stepProps} />;
       case 5:
-        return <Step5CurrentMortgages {...stepProps} />;
+        return <Step5CreditHistory {...stepProps} />;
       case 6:
-        return <Step6LoanAmount {...stepProps} />;
+        return <Step6CreditScore {...stepProps} />;
       case 7:
-        return <Step7LoanPurpose {...stepProps} />;
-      case 8:
-        return <Step8CreditHistory {...stepProps} />;
-      case 9:
-        return <Step9CreditScore {...stepProps} />;
-      case 10:
-        return <Step10Province {...stepProps} />;
-      case 11:
-        return <Step11ContactInfo {...stepProps} />;
+        return <Step7ContactInfo {...stepProps} />;
       default:
         return <Step1LoanDetails {...stepProps} />;
     }
@@ -95,15 +95,15 @@ export default function MultiStepForm() {
   return (
     <div className="max-w-4xl mx-auto">
       {/* Progress Bar */}
-      <div className="mb-8">
+      <div ref={progressBarRef}>
         <ProgressBar
           currentStep={formData.currentStep}
-          totalSteps={11}
+          totalSteps={7}
         />
       </div>
 
       {/* Form Content */}
-      <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-8">
+      <div ref={formContentRef} className="bg-white rounded-xl shadow-lg border border-gray-200 pt-4 px-8 pb-8">
         {renderCurrentStep()}
       </div>
 

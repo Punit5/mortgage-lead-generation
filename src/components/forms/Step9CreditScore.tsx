@@ -34,7 +34,7 @@ export default function Step9CreditScore({
   return (
     <div className="space-y-2 animate-slideInUp">
       <div className="text-center">
-        <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full mx-auto mb-2 flex items-center justify-center shadow-lg relative group">
+        <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full mx-auto mb-1 flex items-center justify-center shadow-lg relative group">
           <span className="text-xl">📈</span>
           <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
             Help us determine your loan options
@@ -154,10 +154,10 @@ export default function Step9CreditScore({
       </div>
 
       {/* Progress indicator */}
-      <div className="text-center mt-12">
+      <div className="text-center mt-6">
         <div className="flex items-center justify-center space-x-3 text-gray-600 text-lg">
           <div className="w-3 h-3 bg-cyan-500 rounded-full animate-pulse"></div>
-          <span className="font-medium">Step 9 of 11</span>
+          <span className="font-medium">Step 8 of 10</span>
           <div className="text-sm text-gray-900">• Nearly there!</div>
         </div>
       </div>
